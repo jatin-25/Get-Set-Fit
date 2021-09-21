@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,7 +25,7 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.white,
         body: Padding(
-          padding: const EdgeInsets.only(top: 20.0, left: 20, right: 15),
+          padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
           child: Column(children: [
             Row(
               children: [
@@ -176,8 +180,8 @@ class _HomePageState extends State<HomePage> {
                             boxShadow: const [
                               BoxShadow(
                                   color: Color(0xff1a237e),
-                                  blurRadius: 10,
-                                  offset: Offset(4, 8)),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 6)),
                             ],
                           ),
                           child: Padding(
@@ -192,6 +196,75 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 30),
+            Stack(children: [
+              Container(
+                height: 110,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(8, 10),
+                        blurRadius: 40,
+                        color: Color(0xff1a237e).withOpacity(0.2),
+                      ),
+                      BoxShadow(
+                        offset: Offset(-1, -5),
+                        blurRadius: 10,
+                        color: Color(0xff1a237e).withOpacity(0.2),
+                      )
+                    ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Container(
+                  height: 110,
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(right: 170),
+                  alignment: Alignment.bottomLeft,
+                  child: SvgPicture.asset('assets/fitness.svg'),
+                ),
+              ),
+              Container(
+                height: 70,
+                width: double.maxFinite,
+                margin: const EdgeInsets.only(left: 170, top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "You are doing Great",
+                      style: TextStyle(
+                        color: Color(0xff5c6bc0),
+                        fontFamily: GoogleFonts.karlaTextTheme().toString(),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      "Keep it Up",
+                      style: TextStyle(
+                        color: Color(0xff9fa8da),
+                        fontFamily: GoogleFonts.karlaTextTheme().toString(),
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      "Stick to your Plan",
+                      style: TextStyle(
+                        color: Color(0xff9fa8da),
+                        fontFamily: GoogleFonts.karlaTextTheme().toString(),
+                        fontSize: 15,
+                      ),
+                    ),
+                    
+                  ],
+                ),
+              )
+            ])
           ]),
         ),
       ),
