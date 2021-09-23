@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/models/body_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +17,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<List<BodyPartsModel>> readJsonData() async {
+    //read json file
+    final jsondata = await rootBundle.loadString('assets/json/body_area.json');
+    //decode json data as list
+    final list = json.decode(jsondata).cast<Map<String, dynamic>>();
+
+    //map json and initialize using DataModel
+    return list
+        .map<BodyPartsModel>((json) => BodyPartsModel.fromJson(json))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -199,11 +214,11 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Stack(children: [
               Container(
-                height: 110,
+                height: 98,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         offset: Offset(8, 10),
@@ -260,11 +275,128 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 15,
                       ),
                     ),
-                    
                   ],
                 ),
               )
-            ])
+            ]),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Text(
+                  "Area of Focus",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: GoogleFonts.latoTextTheme().toString(),
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87),
+                )
+              ],
+            ),
+            // Expanded(
+            //     child: ListView.builder(
+            //   itemCount: info.length.toDouble() ~/ 2,
+            //   itemBuilder: (context, i) {
+            //     return Row(
+            //       children: [
+            //         Container(
+            //           height: 200,
+            //           width: 170,
+            //           decoration: BoxDecoration(
+            //               borderRadius: BorderRadius.circular(15),
+            //               color: Colors.white,
+            //               image: DecorationImage(
+            //                 image: AssetImage(list[]),
+            //               ),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   offset: Offset(5, 5),
+            //                   blurRadius: 10,
+            //                   color: Color(0xff9fa8da).withOpacity(0.3),
+            //                 ),
+            //                 BoxShadow(
+            //                   offset: Offset(5, 5),
+            //                   blurRadius: 10,
+            //                   color: Color(0xff9fa8da).withOpacity(0.3),
+            //                 )
+            //               ]),
+            //           child: Center(
+            //             child: Align(
+            //               alignment: Alignment.bottomCenter,
+            //               child: Text(
+            //                 info[i]["title"],
+            //                 style: TextStyle(
+            //                   fontFamily:
+            //                       GoogleFonts.karlaTextTheme().toString(),
+            //                   fontSize: 20,
+            //                   color: Color(0xff9fa8da),
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         )
+            //       ],
+            //     );
+            //   },
+            // )),
+
+            FutureBuilder(
+              future: readJsonData(),
+              builder: (context, data) {
+                if (data.hasError) {
+                  //in case if error found
+                  return Center(child: Text("${data.error}"));
+                } else if (data.hasData) {
+                  //once data is ready this else block will execute
+                  // items will hold all the data of DataModel
+                  //items[index].name can be used to fetch name of product as done below
+                  var items = data.data as List<BodyPartsModel>;
+                  return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              child: Image(
+                                image: AssetImage(items[index].image),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Expanded(
+                                child: Container(
+                              padding: EdgeInsets.only(bottom: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: Text(
+                                      items[index].title,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))
+                          ],
+                        );
+                      });
+                } else {
+                  // show circular progress while data is getting fetched from json file
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            )
           ]),
         ),
       ),
